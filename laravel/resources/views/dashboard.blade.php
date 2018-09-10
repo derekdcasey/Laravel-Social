@@ -25,8 +25,8 @@
                 <p>{{ $post->body }}</p>
                 <div>Posted By {{ $post->user->name }} on {{ $post->created_at }}</div>
                 <div>
-                    <a href="">Like</a> |
-                    <a href="">Dislike</a>
+                    <a class="like" href="#">Like</a> |
+                    <a class="like" href="#">Dislike</a>
                     @if(Auth::user() == $post->user) | 
                     <a href="" class="edit" data-toggle="modal" data-target="#exampleModal">Edit</a> |
                     <a href="{{ route('post.delete',['post_id' => $post->id ]) }}">Delete</a>
@@ -71,6 +71,7 @@
 <script>
     var token = '{{ Session::token() }}'
     var url = '{{ route('edit') }}'
+    var urlLike = '{{ route('like') }}'
     var postId = 0;
     var postBodyElement = null;
 
@@ -97,6 +98,20 @@ $( document ).ready(function() {
                 $('#edit-modal').modal('hide');
             });
         })
+
+        $('.like').on('click', function(event){
+            event.preventDefault();
+            var isLike = event.target.previousElementSibling == null;
+            postId = event.target.parentNode.parentNode.getAttribute('data-postId');
+            $.ajax({
+                method:'POST',
+                url: urlLike,
+                data:{isLike:isLike,postId:postId,_token:token}
+            }).done(function(){
+                //change the page                
+            });
+        });
+
 
 });
 </script>
